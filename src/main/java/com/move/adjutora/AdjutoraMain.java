@@ -51,7 +51,9 @@ public class AdjutoraMain {
             CommandLine cmd = new CommandLine(commands, factory);
             PicocliCommands picocliCommands = new PicocliCommands(cmd);
 
-            Parser parser = new DefaultParser();
+            DefaultParser parser = new DefaultParser();
+            parser.setEscapeChars(new char[]{});
+
             try (Terminal terminal = TerminalBuilder.builder().build()) {
                 SystemRegistry systemRegistry = new SystemRegistryImpl(parser, terminal, workDir, null);
                 systemRegistry.setCommandRegistries(builtins, picocliCommands);
@@ -94,6 +96,8 @@ public class AdjutoraMain {
             t.printStackTrace();
         } finally {
             AnsiConsole.systemUninstall();
+            AdjutoraUtils.closeDatabase(props.getProperty("jdbc.url"));
+            System.out.println("Database closed!");
         }
     }
 }

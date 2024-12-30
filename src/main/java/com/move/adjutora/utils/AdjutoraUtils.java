@@ -2,6 +2,7 @@ package com.move.adjutora.utils;
 
 import com.move.adjutora.config.ConfigContext;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.jline.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,6 +51,13 @@ public class AdjutoraUtils {
             runner.runScript(script);
         } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void closeDatabase(String databaseUrl) {
+        try (Connection connection = DriverManager.getConnection(databaseUrl + ";shutdown=true")) {
+        } catch (SQLException e) {
+            Log.info("Success shutting down database");
         }
     }
 }
