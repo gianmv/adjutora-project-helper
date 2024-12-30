@@ -1,5 +1,7 @@
 package com.move.adjutora.model.database;
 
+import com.move.adjutora.model.TaskDto;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -20,6 +22,16 @@ public class Task {
         this.creationdate = creationdate;
         this.duedate = duedate;
         this.donedate = donedate;
+    }
+
+    public Task(TaskDto task) {
+        this.taskId = task.getTaskId();
+        this.parentTaskId = task.getParentTaskId();
+        this.title = task.getTitle();
+        this.description = task.getDescription();
+        this.creationdate = task.getCreationdate();
+        this.duedate = task.getDuedate();
+        this.donedate = task.getDonedate();
     }
 
     public Long getTaskId() {

@@ -1,5 +1,6 @@
 package com.move.adjutora.model.expimp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.move.adjutora.model.TaskTree;
 
 import java.util.LinkedList;
@@ -7,22 +8,28 @@ import java.util.List;
 import java.util.Objects;
 
 public class TaskTreeExpImp {
-    private final TaskTreeExpImp node;
-    private final List<TaskTree> children = new LinkedList<>();
+    private final TaskExpImp node;
+    private final List<TaskTreeExpImp> children = new LinkedList<TaskTreeExpImp>();
 
-    public TaskTreeExpImp(TaskTreeExpImp node) {
+    public TaskTreeExpImp(TaskExpImp node) {
         this.node = node;
     }
 
     public TaskTreeExpImp(TaskTree node) {
-        this.node = new TaskTreeExpImp(node);
+        this.node = new TaskExpImp(node.getNode());
+        this.children.addAll(node.getChildren().stream().map(TaskTreeExpImp::new).toList());
     }
 
-    public TaskTreeExpImp getNode() {
+    public TaskTreeExpImp(@JsonProperty("node") TaskExpImp node, @JsonProperty("children") List<TaskTreeExpImp> children) {
+        this.node = node;
+        this.children.addAll(children);
+    }
+
+    public TaskExpImp getNode() {
         return node;
     }
 
-    public List<TaskTree> getChildren() {
+    public List<TaskTreeExpImp> getChildren() {
         return children;
     }
 

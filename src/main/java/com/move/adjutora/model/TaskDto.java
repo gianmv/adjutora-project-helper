@@ -1,6 +1,7 @@
 package com.move.adjutora.model;
 
 import com.move.adjutora.model.database.Task;
+import com.move.adjutora.model.expimp.TaskExpImp;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -15,6 +16,16 @@ public class TaskDto {
     private Long parentTaskId;
 
     public TaskDto(Task task) {
+        this.taskId = task.getTaskId();
+        this.title = task.getTitle();
+        this.description = task.getDescription();
+        this.creationdate = task.getCreationdate();
+        this.duedate = task.getDuedate();
+        this.donedate = task.getDonedate();
+        this.parentTaskId = task.getParentTaskId();
+    }
+
+    public TaskDto(TaskExpImp task) {
         this.taskId = task.getTaskId();
         this.title = task.getTitle();
         this.description = task.getDescription();

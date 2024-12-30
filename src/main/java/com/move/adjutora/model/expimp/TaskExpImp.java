@@ -1,5 +1,7 @@
 package com.move.adjutora.model.expimp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.move.adjutora.model.TaskDto;
 import com.move.adjutora.model.database.Task;
 
 import java.time.LocalDateTime;
@@ -14,7 +16,7 @@ public class TaskExpImp {
     private LocalDateTime donedate;
     private Long parentTaskId;
 
-    private TaskExpImp(Task task) {
+    public TaskExpImp(TaskDto task) {
         this.taskId = task.getTaskId();
         this.title = task.getTitle();
         this.description = task.getDescription();
@@ -22,6 +24,24 @@ public class TaskExpImp {
         this.duedate = task.getDuedate();
         this.donedate = task.getDonedate();
         this.parentTaskId = task.getParentTaskId();
+    }
+
+    public TaskExpImp(
+            @JsonProperty("taskId") Long taskId,
+            @JsonProperty("title") String title,
+            @JsonProperty("description") String description,
+            @JsonProperty("creationdate") LocalDateTime creationdate,
+            @JsonProperty("duedate") LocalDateTime duedate,
+            @JsonProperty("donedate") LocalDateTime donedate,
+            @JsonProperty("parentTaskId") Long parentTaskId
+    ) {
+        this.taskId = taskId;
+        this.title = title;
+        this.description = description;
+        this.creationdate = creationdate;
+        this.duedate = duedate;
+        this.donedate = donedate;
+        this.parentTaskId = parentTaskId;
     }
 
     public Long getTaskId() {

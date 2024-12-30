@@ -1,5 +1,6 @@
 package com.move.adjutora.model.expimp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.move.adjutora.model.TaskCollection;
 
 import java.util.LinkedList;
@@ -13,6 +14,10 @@ public class TaskCollectionExportImport {
     public TaskCollectionExportImport(TaskCollection taskCollection) {
         Objects.requireNonNull(taskCollection);
         this.tasks.addAll(taskCollection.getTasks().stream().map(TaskTreeExpImp::new).toList());
+    }
+
+    public TaskCollectionExportImport(@JsonProperty("tasks") List<TaskTreeExpImp> tasks) {
+        this.tasks.addAll(tasks);
     }
 
     public String getVersion() {
