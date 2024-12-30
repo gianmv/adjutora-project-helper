@@ -95,7 +95,7 @@
         order by T.DUEDATE asc
     </select>
 
-    <insert id="insertSingleTask" parameterType="Task">
+    <insert id="insertSingleTask" parameterType="Task" useGeneratedKeys="true" keyColumn="TASKID" keyProperty="taskId">
         INSERT INTO TASK (TITLE, DESCRIPTION, DUEDATE, PARENTTASKID)
         VALUES (#{title}, #{description, jdbcType=VARCHAR}, #{duedate, jdbcType=TIMESTAMP}, #{parentTaskId, jdbcType=INTEGER})
     </insert>
@@ -107,12 +107,7 @@
         WHERE T.TASKID = #{taskId}
     </update>
     <delete id="deleteTaskById">
-        DELETE FROM U_ADJUTORA.TASK WHERE #{taskId}
+        DELETE FROM U_ADJUTORA.TASK WHERE TASK.TASKID = #{taskId}
     </delete>
-    <delete id="deleteAllAdditionalInfo">
-        TRUNCATE TABLE U_ADJUTORA.ADDITIONALINFO
-    </delete>
-    <delete id="deleteAllTask">
-        TRUNCATE TABLE U_ADJUTORA.TASK
-    </delete>
+
 </mapper>

@@ -23,6 +23,4 @@ public interface TaskMapper {
     Optional<Task> getTaskById(Long taskId);
     void updateTaskById(@Param("parameterMap") Map<String, Object> parameterMap, @Param("taskId") Long taskId);
     void deleteTaskById(Long taskId);
-    void deleteAllAdditionalInfo();
-    void deleteAllTask();
 }
