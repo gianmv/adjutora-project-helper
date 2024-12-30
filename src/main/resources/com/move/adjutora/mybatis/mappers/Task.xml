@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.move.adjutora.repository.TaskMapper">
+    <resultMap id="taskResult" type="Task">
+        <id property="taskId" column="TASKID"/>
+        <result property="title" column="TITLE" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="description" column="DESCRIPTION" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="creationdate" column="CREATIONDATE" javaType="java.time.LocalDateTime" jdbcType="TIMESTAMP"/>
+        <result property="duedate" column="DUEDATE" javaType="java.time.LocalDateTime" jdbcType="TIMESTAMP"/>
+        <result property="donedate" column="DONEDATE" javaType="java.time.LocalDateTime" jdbcType="TIMESTAMP"/>
+        <result property="parentTaskId" column="PARENTTASKID"/>
+    </resultMap>
+
+    <select id="getAllParentTaskUndone" resultType="Task" resultMap="taskResult">
+        select T.TASKID,
+               T.PARENTTASKID,
+               T.TITLE,
+               T.DESCRIPTION,
+               T.CREATIONDATE,
+               T.DUEDATE,
+               T.DONEDATE
+        from U_ADJUTORA.TASK AS T
+        where T.PARENTTASKID IS NULL
+          AND T.DONEDATE IS NULL
+        order by T.DUEDATE asc
+    </select>
+
+    <select id="getAllTaskByParentTaskId" resultType="Task" resultMap="taskResult">
+        select T.TASKID,
+               T.PARENTTASKID,
+               T.TITLE,
+               T.DESCRIPTION,
+               T.CREATIONDATE,
+               T.DUEDATE,
+               T.DONEDATE
+        from U_ADJUTORA.TASK AS T
+        where T.PARENTTASKID = #{parentaskid}
+        order by T.DUEDATE asc
+    </select>
+
+    <select id="getTaskById" resultType="Task" resultMap="taskResult">
+        select T.TASKID,
+               T.PARENTTASKID,
+               T.TITLE,
+               T.DESCRIPTION,
+               T.CREATIONDATE,
+               T.DUEDATE,
+               T.DONEDATE
+        from U_ADJUTORA.TASK AS T
+        where T.TASKID = #{parentaskid}
+    </select>
+
+
+    <select id="getAllTask" resultType="Task" resultMap="taskResult">
+        select T.TASKID,
+               T.PARENTTASKID,
+               T.TITLE,
+               T.DESCRIPTION,
+               T.CREATIONDATE,
+               T.DUEDATE,
+               T.DONEDATE
+        from U_ADJUTORA.TASK AS T
+        where T.PARENTTASKID IS NULL
+        order by T.DUEDATE asc
+    </select>
+
+    <select id="getAllTaskByFilter" resultType="Task" resultMap="taskResult">
+        select T.TASKID,
+        T.PARENTTASKID,
+        T.TITLE,
+        T.DESCRIPTION,
+        T.CREATIONDATE,
+        T.DUEDATE,
+        T.DONEDATE
+        from U_ADJUTORA.TASK AS T
+        WHERE
+        <choose>
+            <when test="@com.move.adjutora.model.TaskTimeField@DONEDATE.equals(taskTimeField)">
+                T.DONEDATE BETWEEN #{startDate} AND #{endDate} AND
+            </when>
+            <when test="@com.move.adjutora.model.TaskTimeField@CREATIONDATE.equals(taskTimeField)">
+                T.CREATIONDATE BETWEEN #{startDate} AND #{endDate} AND
+            </when>
+            <when test="@com.move.adjutora.model.TaskTimeField@DUEDATE.equals(taskTimeField)">
+                T.DUEDATE BETWEEN #{startDate} AND #{endDate} AND
+            </when>
+        </choose>
+
+        <choose>
+            <when test="doneStatus"> T.DONEDATE IS NOT NULL</when>
+            <otherwise> T.DONEDATE IS NULL</otherwise>
+        </choose>
+        order by T.DUEDATE asc
+    </select>
+
+    <insert id="insertSingleTask" parameterType="Task">
+        INSERT INTO TASK (TITLE, DESCRIPTION, DUEDATE, PARENTTASKID)
+        VALUES (#{title}, #{description, jdbcType=VARCHAR}, #{duedate, jdbcType=TIMESTAMP}, #{parentTaskId, jdbcType=INTEGER})
+    </insert>
+    <update id="updateTaskById" >
+        UPDATE U_ADJUTORA.TASK T SET
+        <foreach collection="parameterMap.entrySet()" index="key" item="value" separator=", " >
+            ${key}=#{value}
+        </foreach>
+        WHERE T.TASKID = #{taskId}
+    </update>
+    <delete id="deleteTaskById">
+        DELETE FROM U_ADJUTORA.TASK WHERE #{taskId}
+    </delete>
+    <delete id="deleteAllAdditionalInfo">
+        TRUNCATE TABLE U_ADJUTORA.ADDITIONALINFO
+    </delete>
+    <delete id="deleteAllTask">
+        TRUNCATE TABLE U_ADJUTORA.TASK
+    </delete>
+</mapper>

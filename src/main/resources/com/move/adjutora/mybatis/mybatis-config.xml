@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings!-->
+    <typeAliases>
+        <typeAlias alias="Task" type="com.move.adjutora.model.database.Task"/>
+        <typeAlias alias="TaskTimeFieldEnum" type="com.move.adjutora.model.TaskTimeField"/>
+    </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="com.move.adjutora.converter.LocalDateTimeTypeHandler"/>
+    </typeHandlers>
+
+    <environments default="production">
+        <environment id="production">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.schema}"/>
+                <property name="password" value="${jdbc.schema}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="com/move/adjutora/mybatis/mappers/Task.xml"/>
+    </mappers>
+</configuration>
