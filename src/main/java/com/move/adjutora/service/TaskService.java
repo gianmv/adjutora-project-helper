@@ -5,6 +5,8 @@ import com.move.adjutora.model.TaskTimeField;
 import com.move.adjutora.model.TaskCollection;
 import com.move.adjutora.model.TaskTree;
 import com.move.adjutora.model.database.Task;
+import com.move.adjutora.model.expimp.TaskCollectionExportImport;
+import com.move.adjutora.model.expimp.TaskTreeExpImp;
 import com.move.adjutora.repository.TaskMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -143,4 +145,45 @@ public class TaskService {
             return Optional.empty();
         }
     }
+
+    public void deleteDatabase() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            TaskMapper taskMapper = session.getMapper(TaskMapper.class);
+            TaskCollection taskCollection = getAllTasks();
+            for(TaskTree taskTree : taskCollection.getTasks()) {
+                deleteTaskTree(taskTree, taskMapper);
+            }
+            session.commit();
+        }
+    }
+
+    private void deleteTaskTree(TaskTree taskTree, TaskMapper taskMapper) {
+        if(taskTree.getChildren().isEmpty()) {
+            taskMapper.deleteTaskById(taskTree.getNode().getTaskId());
+        } else {
+            for (TaskTree child : taskTree.getChildren()) {
+                deleteTaskTree(child, taskMapper);
+            }
+            taskMapper.deleteTaskById(taskTree.getNode().getTaskId());
+        }
+    }
+
+    public void importDatabase(TaskCollectionExportImport taskCollection) {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            for (TaskTreeExpImp taskTree : taskCollection.getTasks()) {
+                importTaskTreeExpImp(taskTree, session.getMapper(TaskMapper.class));
+            }
+            session.commit();
+        }
+    }
+
+    private void importTaskTreeExpImp(TaskTreeExpImp taskTree, TaskMapper taskMapper) {
+        Task insertedToInsert = new Task(new TaskDto(taskTree.getNode()));
+        taskMapper.insertSingleTask(insertedToInsert);
+        for (TaskTreeExpImp it : taskTree.getChildren()) {
+            it.getNode().setParentTaskId(insertedToInsert.getTaskId());
+            importTaskTreeExpImp(it, taskMapper);
+        }
+    }
+
 }
